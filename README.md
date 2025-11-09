@@ -18,7 +18,6 @@ Crie uma pasta em qualquer local do seu computador e crie um arquivo Yaml de qua
 voce pode alterar o aws-teste por qualquer outro nome. Veja que aqui ele vai criar um recurso do S3 e subir um arquivo index.html
 para seu bucket criado e ja vai retornar a URL para acesso ao bucket como se fosse um WebSite.
 
-##############################################
 name: aws-teste
 description: aws-teste
 runtime: yaml
@@ -69,7 +68,6 @@ config:
   pulumi:tags:
     value:
       pulumi:template: aws-yaml
-##############################################
 
 Crie um arquivo no mesmo diretório chamado index.html e coloque as informações abaixo.
 <html>
