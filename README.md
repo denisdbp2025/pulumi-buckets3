@@ -1,91 +1,88 @@
-## Utilizando Pulumi para provisionar um Bucket no S3 ##
+ # AWS S3 Bucket (Pulumi YAML)
 
-No meu caso estou usando o Windows junto ao Powershel.
+ A minimal Pulumi YAML template that provisions an AWS S3 Bucket and exports its name.
 
-Para instalar o Pulumi usei o Chocolatey.
+ ## Overview
 
-Utilize o comando choco install pulumi
+ This template uses the AWS provider to create a single S3 bucket. It is a great starting point for projects that require simple object storage with minimal setup.
 
-## Obs: Após a instalação para que o Pulumi funcione voce deve informar o Path onde se encontra o Pulumi,
-basta digitar na pesquisa do menu iniciar do Windows Variáveis, e clicar em "Editar as variáveis de ambiente do sistema"
-após isso na tela que se abrir clicar em "Variáveis de ambiente" e clica em Novo e informar o Path %USERPROFILE%\.pulumi\bin
-com isso ja é possível usar o Pulumi.
+ ## Providers
 
-Recomendo instalar o AWS CLI no Windows e depois de instalado executar o comando aws configure para informar sua Key e AccessKey
-para confugurar sua conta, para obter essas chaves basta ir na seção de IAM na AWS e criar uma conta.
+ - AWS
 
-Crie uma pasta em qualquer local do seu computador e crie um arquivo Yaml de qualquer nome e coloque essas informações abaixo,
-voce pode alterar o aws-teste por qualquer outro nome. Veja que aqui ele vai criar um recurso do S3 e subir um arquivo index.html
-para seu bucket criado e ja vai retornar a URL para acesso ao bucket como se fosse um WebSite.
+ ## Resources Created
 
-######################################################
-name: aws-teste
-description: aws-teste
-runtime: yaml
-resources:
-  
-  my-bucket:
-    type: aws:s3:Bucket
-  
-  website:
-    type: aws:s3:BucketWebsiteConfiguration
-    properties:
-      bucket: ${my-bucket.id}
-      indexDocument:
-        suffix: index.html
-    
-  index.html:
-    type: aws:s3:BucketObject
-    properties:
-      bucket: ${my-bucket.id}
-      source:
-        fn::fileAsset: index.html
-      contentType: text/html
-      acl: public-read
-    options:
-      dependsOn:
-        - ${ownership-controls}
-        - ${public-access-block}
+ - aws:s3:BucketV2 (`my-bucket`): A basic S3 bucket.
 
-  ownership-controls:
-    type: aws:s3:BucketOwnershipControls
-    properties:
-      bucket: ${my-bucket.id}
-      rule:
-        objectOwnership: ObjectWriter
+ ## Outputs
 
-  public-access-block:
-    type: aws:s3:BucketPublicAccessBlock
-    properties:
-      bucket: ${my-bucket.id}
-      blockPublicAcls: false
-outputs:
-  bucketName: ${my-bucket.id}
-  url: http://${website.websiteEndpoint}
-config:
-  pulumi:tags:
-    value:
-      pulumi:template: aws-yaml
-######################################################      
+ - **bucketName**: The name (ID) of the created S3 bucket.
 
-Crie um arquivo no mesmo diretório chamado index.html e coloque as informações abaixo.
-<html>
-    <body>
-        <h1>Hello, Pulumi!</h1>
-    </body>
-</html>
+ ## Prerequisites
 
-Feito isso podemos iniciar o Pulumi, escreva o comando pulumi new aws-yaml
+ - Pulumi CLI configured and logged in to your chosen backend.
+ - AWS credentials configured (environment variables, `~/.aws/credentials`, or `AWS_PROFILE`).
+ - An AWS account with permissions to create S3 buckets.
 
-Obs: aws-yaml pode ser trocado por outro nome.
+ ## Usage
 
-O pulumi new comando guia você interativamente pelo processo de inicialização de um novo projeto, bem como pela criação e configuração de uma pilha (stack ). Uma pilha é uma instância do seu projeto, e você pode ter várias delas – como `project1`, `project2` , `project3` e ` project4` – cada uma com configurações diferentes.devstagingprod
+ Initialize a new project from this template by running:
 
-Você será solicitado a inserir valores de configuração, como uma região da AWS. Você pode pressionar ENTER para aceitar o valor padrão us-east-1 ou digitar outro valor, como us-west-2:
+ ```bash
+ pulumi new aws-yaml
+ ```
 
-The AWS region to deploy into (aws:region) (us-east-1): us-west-2
-Se esta for a sua primeira vez executando o Pulumi, você será solicitado a fazer login no Pulumi Cloud. Este é um serviço gratuito, porém opcional, que facilita a Infraestrutura como Código (IaC) gerenciando o estado de forma segura e protegida.
+ You will be prompted for:
+ - A project name (default is set by the template).
+ - A project description.
+ - The AWS region to deploy into (default: `us-east-1`).
 
-Algumas informações:
-Ao criar um recurso ele vai pedir o Yes para aprovar a solicitação.
-Voce pode editar o arquivo Yaml e atualizar as informações usando pulumi up.
+ After initialization, deploy your stack:
+
+ ```bash
+ pulumi up
+ ```
+
+ ## Project Layout
+
+ After `pulumi new`, your directory will look like:
+
+ ```
+ .
+ ├── Pulumi.yaml           # Project metadata and YAML program
+ └── Pulumi.<stack>.yaml   # Stack configuration (e.g., aws:region)
+ ```
+
+ ## Configuration
+
+ This template supports the following configuration keys:
+
+ - **aws:region**: The AWS region to deploy resources into.
+   - Default: `us-east-1`
+
+ To override the region, run:
+
+ ```bash
+ pulumi config set aws:region us-west-2
+ ```
+
+ ## When to Use This Template
+
+ This template is ideal if you need:
+ - A lightweight starting point for creating an S3 bucket.
+ - To learn Pulumi with YAML programs.
+ - A quick bootstrap for small storage-focused projects.
+
+ ## Next Steps
+
+ - Enable bucket versioning, encryption, or lifecycle rules.
+ - Add IAM policies or roles for access control.
+ - Integrate with other AWS services (e.g., Lambda, CloudFront).
+ - Explore additional Pulumi AWS YAML examples.
+
+ ## Getting Help
+
+ If you have questions or encounter issues:
+ - Visit the Pulumi documentation: https://www.pulumi.com/docs/
+ - Join the Pulumi Community Slack: https://www.pulumi.com/slack
+ - Open an issue in this GitHub repository.

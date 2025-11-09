@@ -1,0 +1,50 @@
+name: aws-teste
+description: aws-teste
+runtime: yaml
+resources:
+  # Create an AWS resource (S3 Bucket)
+  my-bucket:
+    type: aws:s3:Bucket
+  # Turn the bucket into a website:
+  website:
+    type: aws:s3:BucketWebsiteConfiguration
+    properties:
+      bucket: ${my-bucket.id}
+      indexDocument:
+        suffix: index.html
+    # Create an S3 Bucket object
+  index.html:
+    type: aws:s3:BucketObject
+    properties:
+      bucket: ${my-bucket.id}
+      source:
+        fn::fileAsset: index.html
+      contentType: text/html
+      acl: public-read
+    options:
+      dependsOn:
+        - ${ownership-controls}
+        - ${public-access-block}
+
+  # Permit access control configuration:
+  ownership-controls:
+    type: aws:s3:BucketOwnershipControls
+    properties:
+      bucket: ${my-bucket.id}
+      rule:
+        objectOwnership: ObjectWriter
+
+  # Enable public access to the website:
+  public-access-block:
+    type: aws:s3:BucketPublicAccessBlock
+    properties:
+      bucket: ${my-bucket.id}
+      blockPublicAcls: false
+outputs:
+  # Export the name of the bucket
+  bucketName: ${my-bucket.id}
+  url: http://${website.websiteEndpoint}
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: aws-yaml
