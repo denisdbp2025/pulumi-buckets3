@@ -23,17 +23,17 @@ name: aws-teste
 description: aws-teste
 runtime: yaml
 resources:
-  # Create an AWS resource (S3 Bucket)
+  
   my-bucket:
     type: aws:s3:Bucket
-  # Turn the bucket into a website:
+ 
   website:
     type: aws:s3:BucketWebsiteConfiguration
     properties:
       bucket: ${my-bucket.id}
       indexDocument:
         suffix: index.html
-    # Create an S3 Bucket object
+   
   index.html:
     type: aws:s3:BucketObject
     properties:
@@ -47,7 +47,7 @@ resources:
         - ${ownership-controls}
         - ${public-access-block}
 
-  # Permit access control configuration:
+  
   ownership-controls:
     type: aws:s3:BucketOwnershipControls
     properties:
@@ -55,14 +55,14 @@ resources:
       rule:
         objectOwnership: ObjectWriter
 
-  # Enable public access to the website:
+  
   public-access-block:
     type: aws:s3:BucketPublicAccessBlock
     properties:
       bucket: ${my-bucket.id}
       blockPublicAcls: false
 outputs:
-  # Export the name of the bucket
+ 
   bucketName: ${my-bucket.id}
   url: http://${website.websiteEndpoint}
 config:
@@ -92,5 +92,6 @@ Se esta for a sua primeira vez executando o Pulumi, você será solicitado a faz
 Algumas informações:
 Ao criar um recurso ele vai pedir o Yes para aprovar a solicitação.
 Voce pode editar o arquivo Yaml e atualizar as informações usando pulumi up.
+
 
 
