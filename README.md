@@ -18,21 +18,22 @@ Crie uma pasta em qualquer local do seu computador e crie um arquivo Yaml de qua
 voce pode alterar o aws-teste por qualquer outro nome. Veja que aqui ele vai criar um recurso do S3 e subir um arquivo index.html
 para seu bucket criado e ja vai retornar a URL para acesso ao bucket como se fosse um WebSite.
 
+######################################################
 name: aws-teste
 description: aws-teste
 runtime: yaml
 resources:
-  # Create an AWS resource (S3 Bucket)
+  
   my-bucket:
     type: aws:s3:Bucket
-  # Turn the bucket into a website:
+  
   website:
     type: aws:s3:BucketWebsiteConfiguration
     properties:
       bucket: ${my-bucket.id}
       indexDocument:
         suffix: index.html
-    # Create an S3 Bucket object
+    
   index.html:
     type: aws:s3:BucketObject
     properties:
@@ -46,7 +47,6 @@ resources:
         - ${ownership-controls}
         - ${public-access-block}
 
-  # Permit access control configuration:
   ownership-controls:
     type: aws:s3:BucketOwnershipControls
     properties:
@@ -54,20 +54,19 @@ resources:
       rule:
         objectOwnership: ObjectWriter
 
-  # Enable public access to the website:
   public-access-block:
     type: aws:s3:BucketPublicAccessBlock
     properties:
       bucket: ${my-bucket.id}
       blockPublicAcls: false
 outputs:
-  # Export the name of the bucket
   bucketName: ${my-bucket.id}
   url: http://${website.websiteEndpoint}
 config:
   pulumi:tags:
     value:
       pulumi:template: aws-yaml
+######################################################      
 
 Crie um arquivo no mesmo diretório chamado index.html e coloque as informações abaixo.
 <html>
